@@ -9,7 +9,7 @@ Quantidade: 2 vagas
 Prazo para candidatura: *31/10/2025*
 Início das entrevistas: *05/11/2025*
 
-Remuneração: R$750,46 ou R$1.125,69 (20 ou 30 horas/semana) mais vale-transporte de R$10.
+Remuneração: R$750,46 ou R$1.125,69 (20 ou 30 horas/semana) mais vale-transporte de R$10 por dia trabalhado.
 
 Requisitos: Conhecimento básico de git, Python, JavaScript, CSS e HTML; Cursando a partir do 2º semestre de Ciências da Computação, Sistemas de Informação, Engenharia de Software ou afins. Um ano ou mais de curso remanescente (previsão de formatura no 2° semestre de 2026 ou posterior).
 
