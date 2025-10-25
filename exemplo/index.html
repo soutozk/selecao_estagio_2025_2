@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Exemplo: Mapa com Pontos de Interesse</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <!-- Botão para ativar modo de adicionar pontos -->
     <button id="addBtn">Adicionar ponto</button>
 
@@ -18,36 +20,27 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // Variável para controlar se estamos no modo de adicionar pontos
-        let adding = false;
+      // ---------- CÓDIGO ORIGINAL ----------
+      let adding = false;
+      const map = L.map("map").setView([-14.235, -51.9253], 6);
+      const addBtn = document.getElementById("addBtn");
 
-        // Cria o mapa centrado no Brasil
-        const map = L.map('map').setView([-14.235, -51.9253], 6);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
 
-        // Adiciona camada de tiles do OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+      addBtn.addEventListener("click", () => {
+        adding = !adding;
+        addBtn.textContent = adding ? "Cancelar" : "Adicionar ponto";
+        map.getContainer().style.cursor = adding ? "crosshair" : "";
+      });
 
-        // Referência ao botão
-        const addBtn = document.getElementById('addBtn');
+      map.on("click", (e) => {
+        if (!adding) return;
+        const { lat, lng } = e.latlng;
 
-        // Função para alternar modo de adicionar pontos
-        addBtn.addEventListener('click', () => {
-            adding = !adding;
-            addBtn.textContent = adding ? 'Cancelar' : 'Adicionar ponto';
-            map.getContainer().style.cursor = adding ? 'crosshair' : '';
-        });
-
-        // Evento de clique no mapa
-        map.on('click', (e) => {
-            if (!adding) return;
-
-            const { lat, lng } = e.latlng;
-
-            // Cria formulário HTML
-            const formHTML = `
+        const formHTML = `
                 <form id="pointForm">
                     <label>Nome</label>
                     <input type="text" name="name" placeholder="Digite o nome" autofocus>
@@ -62,38 +55,124 @@
                 </form>
             `;
 
-            // Cria popup no local clicado
-            const popup = L.popup()
-                .setLatLng([lat, lng])
-                .setContent(formHTML)
-                .openOn(map);
+        const popup = L.popup()
+          .setLatLng([lat, lng])
+          .setContent(formHTML)
+          .openOn(map);
 
-            // Aguarda o popup ser renderizado para adicionar eventos
-            setTimeout(() => {
-                const form = document.getElementById('pointForm');
-                const cancelBtn = document.getElementById('cancelBtn');
+        setTimeout(() => {
+          const form = document.getElementById("pointForm");
+          const cancelBtn = document.getElementById("cancelBtn");
 
-                // Evento de submit do formulário
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    // Adiciona marcador no mapa
-                    L.marker([lat, lng]).addTo(map);
-                    // Fecha popup e desativa modo de adição
-                    map.closePopup();
-                    adding = false;
-                    addBtn.textContent = 'Adicionar ponto';
-                    map.getContainer().style.cursor = '';
-                });
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            L.marker([lat, lng]).addTo(map);
+            map.closePopup();
+            adding = false;
+            addBtn.textContent = "Adicionar ponto";
+            map.getContainer().style.cursor = "";
+          });
 
-                // Evento de cancelar
-                cancelBtn.addEventListener('click', () => {
-                    map.closePopup();
-                    adding = false;
-                    addBtn.textContent = 'Adicionar ponto';
-                    map.getContainer().style.cursor = '';
-                });
-            }, 0);
-        });
+          cancelBtn.addEventListener("click", () => {
+            map.closePopup();
+            adding = false;
+            addBtn.textContent = "Adicionar ponto";
+            map.getContainer().style.cursor = "";
+          });
+        }, 0);
+      });
+      // ---------- FIM DO CÓDIGO ORIGINAL ----------
     </script>
-</body>
+
+    <!-- ---------- SCRIPT ADICIONAL: REGISTRO DE LOCAIS ---------- -->
+    <script>
+      // ----- CRIAR MENU LATERAL -----
+      const sideMenu = document.createElement("div");
+      sideMenu.id = "sideMenu";
+      sideMenu.innerHTML = `
+            <h3>Locais Registrados</h3>
+            <ul id="locationsList"></ul>
+        `;
+      document.body.appendChild(sideMenu);
+      const locationsList = document.getElementById("locationsList");
+
+      // ----- FUNÇÃO PARA SALVAR NO LOCALSTORAGE -----
+      function savePoints() {
+        const points = [];
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker && layer.options.name) {
+            const { lat, lng } = layer.getLatLng();
+            points.push({
+              lat,
+              lng,
+              name: layer.options.name,
+              description: layer.options.description || "",
+            });
+          }
+        });
+        localStorage.setItem("points", JSON.stringify(points));
+        updateSidebar(points);
+      }
+
+      // ----- FUNÇÃO PARA CARREGAR DO LOCALSTORAGE -----
+      function loadPoints() {
+        const saved = JSON.parse(localStorage.getItem("points")) || [];
+        saved.forEach((point) => {
+          addMarker(point.lat, point.lng, point.name, point.description, false);
+        });
+        updateSidebar(saved);
+      }
+
+      // ----- FUNÇÃO PARA ATUALIZAR MENU LATERAL -----
+      function updateSidebar(points) {
+        locationsList.innerHTML = "";
+        points.forEach((p, index) => {
+          const li = document.createElement("li");
+          li.textContent = p.name || `Ponto ${index + 1}`;
+          li.title = p.description;
+          li.addEventListener("click", () => {
+            map.setView([p.lat, p.lng], 13); //Ao clicar no local salvo ele dá um zomm de 13
+          });
+          locationsList.appendChild(li);
+        });
+      }
+
+      // ----- FUNÇÃO PARA ADICIONAR MARCADOR COM TOOLTIP -----
+      function addMarker(lat, lng, name, description, save = true) {
+        const marker = L.marker([lat, lng], { name, description }).addTo(map);
+        marker.bindTooltip(name, { permanent: false, direction: "top" }); // Hover mostrando o nome
+        if (save) savePoints();
+      }
+
+      // ----- INTERCEPTA FORMULÁRIO ORIGINAL PARA SALVAR NO LOCALSTORAGE -----
+      map.on("popupopen", (e) => {
+        const form = document.getElementById("pointForm");
+        if (!form) return;
+
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        form.addEventListener("submit", (evt) => {
+          evt.preventDefault();
+          const name = form.name.value.trim();
+          const description = form.description.value.trim();
+          const { lat, lng } = e.popup.getLatLng();
+          addMarker(lat, lng, name, description);
+          map.closePopup();
+          adding = false;
+          addBtn.textContent = "Adicionar ponto";
+          map.getContainer().style.cursor = "";
+        });
+
+        cancelBtn.addEventListener("click", () => {
+          map.closePopup();
+          adding = false;
+          addBtn.textContent = "Adicionar ponto";
+          map.getContainer().style.cursor = "";
+        });
+      });
+
+      // ----- INICIALIZAÇÃO -----
+      loadPoints();
+    </script>
+  </body>
 </html>
