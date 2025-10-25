@@ -46,6 +46,37 @@ body {
   overflow-y: auto;
 }
 
+#sideMenuHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#closeSideMenu {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+#openSideMenu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#openSideMenu:hover {
+  background-color: #1976d2;
+}
+
 #sideMenu h3 {
   margin-top: 0;
   font-size: 16px;

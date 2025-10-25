@@ -13,6 +13,14 @@
     <!-- Botão para ativar modo de adicionar pontos -->
     <button id="addBtn">Adicionar ponto</button>
 
+    <div id="sideMenu">
+      <div id="sideMenuHeader">
+        <h3>Locais Registrados</h3>
+        <button id="closeSideMenu">✖</button>
+      </div>
+      <ul id="locationsList"></ul>
+    </div>
+
     <!-- Container do mapa -->
     <div id="map"></div>
 
@@ -86,15 +94,34 @@
 
     <!-- ---------- SCRIPT ADICIONAL: REGISTRO DE LOCAIS ---------- -->
     <script>
-      // ----- CRIAR MENU LATERAL -----
-      const sideMenu = document.createElement("div");
-      sideMenu.id = "sideMenu";
-      sideMenu.innerHTML = `
-            <h3>Locais Registrados</h3>
-            <ul id="locationsList"></ul>
-        `;
-      document.body.appendChild(sideMenu);
+      // Criar botão de abrir menu lateral
+      const openSideMenuBtn = document.createElement("button");
+      openSideMenuBtn.id = "openSideMenu";
+      openSideMenuBtn.textContent = "☰ Locais";
+      document.body.appendChild(openSideMenuBtn);
+
+      // Referências do menu lateral
+      const sideMenu = document.getElementById("sideMenu");
       const locationsList = document.getElementById("locationsList");
+      const closeBtn = document.getElementById("closeSideMenu");
+
+      const openBtn = document.getElementById("openSideMenu");
+      openBtn.addEventListener("click", () => {
+        sideMenu.style.display = "block";
+        openBtn.style.display = "none"; // esconde o botão ao abrir
+      });
+
+      closeBtn.addEventListener("click", () => {
+        sideMenu.style.display = "none";
+        openBtn.style.display = "block"; // mostra o botão ao fechar
+      });
+
+      // ----- FUNÇÃO PARA ADICIONAR MARCADOR COM TOOLTIP E SALVAR -----
+      function addMarker(lat, lng, name, description, save = true) {
+        const marker = L.marker([lat, lng], { name, description }).addTo(map);
+        marker.bindTooltip(name, { permanent: false, direction: "top" }); // Hover mostrando o nome
+        if (save) savePoints();
+      }
 
       // ----- FUNÇÃO PARA SALVAR NO LOCALSTORAGE -----
       function savePoints() {
@@ -131,17 +158,10 @@
           li.textContent = p.name || `Ponto ${index + 1}`;
           li.title = p.description;
           li.addEventListener("click", () => {
-            map.setView([p.lat, p.lng], 13); //Ao clicar no local salvo ele dá um zomm de 13
+            map.flyTo([p.lat, p.lng], 13); // Zoom animado ao clicar
           });
           locationsList.appendChild(li);
         });
-      }
-
-      // ----- FUNÇÃO PARA ADICIONAR MARCADOR COM TOOLTIP -----
-      function addMarker(lat, lng, name, description, save = true) {
-        const marker = L.marker([lat, lng], { name, description }).addTo(map);
-        marker.bindTooltip(name, { permanent: false, direction: "top" }); // Hover mostrando o nome
-        if (save) savePoints();
       }
 
       // ----- INTERCEPTA FORMULÁRIO ORIGINAL PARA SALVAR NO LOCALSTORAGE -----
