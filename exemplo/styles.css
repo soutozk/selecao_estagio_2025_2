@@ -1,85 +1,128 @@
-/* Reset e estilos básicos */
-html, body {
-    height: 100%;
-    margin: 0;
-    font-family: Arial, sans-serif;
+/* Reset */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
+/* Mapa ocupa toda a tela */
 #map {
-    height: 100%;
+  height: 100%;
 }
 
-/* Botão principal */
+/* Botão de adicionar ponto */
 #addBtn {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 10px 16px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    background-color: #2196F3;
-    color: white;
-    cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #addBtn:hover {
-    background-color: #1976D2;
+  background-color: #1976d2;
 }
 
-/* Formulário dentro do popup */
+/* Menu lateral */
+#sideMenu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 220px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.327);
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.349);
+  z-index: 1000;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#sideMenu h3 {
+  margin-top: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+#locationsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#locationsList li {
+  padding: 8px;
+  margin-bottom: 6px;
+  background: #ffffff79;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.558);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#locationsList li:hover {
+  background: #e0e0e0;
+}
+
+/* Popup do formulário */
 .leaflet-popup-content form {
-    min-width: 180px;
+  min-width: 180px;
 }
 
 .leaflet-popup-content label {
-    display: block;
-    margin-top: 8px;
-    margin-bottom: 4px;
-    font-weight: bold;
-    font-size: 13px;
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  font-weight: bold;
+  font-size: 13px;
 }
 
 .leaflet-popup-content input,
 .leaflet-popup-content textarea {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
-    font-size: 13px;
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  font-size: 13px;
 }
 
 .leaflet-popup-content textarea {
-    min-height: 50px;
-    resize: vertical;
+  min-height: 50px;
+  resize: vertical;
 }
 
 /* Botões do formulário */
 .form-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
 }
 
 .form-actions button {
-    flex: 1;
-    padding: 6px 12px;
-    font-size: 13px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .form-actions button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
+  background-color: #4caf50;
+  color: white;
 }
 
 .form-actions button[type="button"] {
-    background-color: #f44336;
-    color: white;
+  background-color: #f44336;
+  color: white;
 }
